@@ -69,3 +69,9 @@ function formatTime(seconds) {
     return `${m}:${String(s).padStart(2,"0")}`;
   }
 }
+// ===== Service Worker 登録 =====
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(err => console.error("SW registration failed:", err));
+}
