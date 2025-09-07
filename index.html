@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>自習ダッシュボード</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <!-- 今日やること -->
+  <section class="card">
+    <h2>📝 今日やること <span class="edit-icon" id="editTasks">✏️</span></h2>
+    <ul id="taskList"></ul>
+  </section>
+
+  <!-- カウントダウン -->
+  <section class="card">
+    <h2>📅 カウントダウン <span class="edit-icon" id="editCountdown">⚙️</span></h2>
+    <div id="countdownGrid" class="grid"></div>
+  </section>
+
+  <!-- Zoom自習室 -->
+  <section class="card">
+    <h2>📌 Zoom自習室 <span class="edit-icon" id="editZoom">✏️</span></h2>
+    <div id="zoomStatus">未設定</div>
+    <button id="joinBtn">入室</button>
+    <button id="successBtn" style="display:none;">入室成功</button>
+  </section>
+
+  <!-- モーダル -->
+  <div id="modalOverlay" class="modal-overlay" style="display:none;">
+    <div id="modalSheet" class="modal-sheet">
+      <div class="modal-grip"></div>
+      <div id="modalContent"></div>
+      <button id="closeModal">閉じる</button>
+    </div>
+  </div>
+
+</body>
+</html>
