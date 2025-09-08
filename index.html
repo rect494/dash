@@ -18,30 +18,52 @@
 
 </head>
 <body>
+  <!-- ログイン画面 -->
+  <div id="loginScreen" style="display:none;">
+    <h2>ログイン</h2>
+    <input type="text" id="loginUser" placeholder="ユーザー名"><br>
+    <input type="password" id="loginPass" placeholder="パスワード"><br>
+    <button id="loginBtn">ログイン</button>
+    <div id="loginMessage" style="color:red; margin-top:8px;"></div>
+  </div>
 
-  <!-- 今日やること -->
-  <section class="card">
-    <h2>📝 今日やること <span class="edit-icon" id="editTasks">✏️</span></h2>
-    <ul id="taskList"></ul>
-  </section>
+  <!-- 登録画面 -->
+  <div id="registerScreen" style="display:none;">
+    <h2>新規登録</h2>
+    <input type="text" id="regUser" placeholder="ユーザー名"><br>
+    <input type="password" id="regPass" placeholder="パスワード"><br>
+    <button id="registerBtn">登録</button>
+  </div>
 
-  <!-- カウントダウン -->
-  <section class="card">
-    <h2>📅 カウントダウン <span class="edit-icon" id="editCountdown">⚙️</span></h2>
-    <div id="countdownGrid" class="grid"></div>
-  </section>
+  <!-- ダッシュボード本体 -->
+  <div id="dashboard" style="display:none;">
+    <button id="logoutBtn" style="float:right;">ログアウト</button>
+    <h1>自習ダッシュボード</h1>
 
-  <!-- Zoom自習室 -->
-  <section class="card">
-    <h2>📌 Zoom自習室 <span class="edit-icon" id="editZoom">✏️</span></h2>
-    <div id="zoomStatus">未設定</div>
-    <div class="zoom-buttons">
-      <button id="joinBtn">入室</button>
-      <button id="successBtn" style="display:none;">入室成功</button>
-    </div>
-  </section>
+    <!-- 今日やること -->
+    <section class="card">
+      <h2>📝 今日やること <span class="edit-icon" id="editTasks">✏️</span></h2>
+      <ul id="taskList"></ul>
+    </section>
 
-  <!-- 共通モーダル（中央ダイアログ） -->
+    <!-- カウントダウン -->
+    <section class="card">
+      <h2>📅 カウントダウン <span class="edit-icon" id="editCountdown">⚙️</span></h2>
+      <div id="countdownGrid" class="grid"></div>
+    </section>
+
+    <!-- Zoom自習室 -->
+    <section class="card">
+      <h2>📌 Zoom自習室 <span class="edit-icon" id="editZoom">✏️</span></h2>
+      <div id="zoomStatus">未設定</div>
+      <div class="zoom-buttons">
+        <button id="joinBtn">入室</button>
+        <button id="successBtn" style="display:none;">入室成功</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 共通モーダル -->
   <div id="modalOverlay" class="modal-overlay" style="display:none;">
     <div id="modalDialog" class="modal-dialog" role="dialog" aria-modal="true">
       <h3 id="modalTitle">編集</h3>
@@ -52,6 +74,6 @@
       </div>
     </div>
   </div>
-
 </body>
+
 </html>
