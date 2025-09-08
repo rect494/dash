@@ -1,3 +1,51 @@
+/* ===== ログイン関連 ===== */
+const loginScreen = document.getElementById("loginScreen");
+const registerScreen = document.getElementById("registerScreen");
+const dashboard = document.getElementById("dashboard");
+
+const savedUser = localStorage.getItem("username");
+const savedPass = localStorage.getItem("password");
+
+// 初期表示
+if (!savedUser || !savedPass) {
+  registerScreen.style.display = "block";
+} else {
+  loginScreen.style.display = "block";
+}
+
+// 登録処理
+document.getElementById("registerBtn").addEventListener("click", () => {
+  const u = document.getElementById("regUser").value.trim();
+  const p = document.getElementById("regPass").value.trim();
+  if (!u || !p) {
+    alert("ユーザー名とパスワードを入力してください");
+    return;
+  }
+  localStorage.setItem("username", u);
+  localStorage.setItem("password", p);
+  alert("登録完了しました！ログインしてください。");
+  registerScreen.style.display = "none";
+  loginScreen.style.display = "block";
+});
+
+// ログイン処理
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const u = document.getElementById("loginUser").value.trim();
+  const p = document.getElementById("loginPass").value.trim();
+  if (u === localStorage.getItem("username") && p === localStorage.getItem("password")) {
+    loginScreen.style.display = "none";
+    dashboard.style.display = "block";
+  } else {
+    document.getElementById("loginMessage").textContent = "ユーザー名またはパスワードが違います";
+  }
+});
+
+// ログアウト
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  dashboard.style.display = "none";
+  loginScreen.style.display = "block";
+});
+
 /* ====== 共通モーダル ====== */
 const overlay = document.getElementById("modalOverlay");
 const modalTitle = document.getElementById("modalTitle");
