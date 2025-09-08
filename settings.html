@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>設定ページ</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fff;
+    }
+
+    .section {
+      margin: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .section-header {
+      padding: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* カテゴリ色 */
+    .account { background: #d6ecff; }   /* 薄水色 */
+    .display { background: #e2f7e2; }   /* 薄緑 */
+    .zoom    { background: #ffe8cc; }   /* 薄オレンジ */
+    .data    { background: #f0e2ff; }   /* 薄紫 */
+
+    /* 展開部分 */
+    .section-content {
+      display: none;
+      background: #E8E8E8;
+      padding: 20px;
+    }
+
+    .item {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item:last-child {
+      margin-bottom: 0;
+    }
+
+    .item label {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .item input,
+    .item select {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 14px;
+      margin-left: auto;
+      margin-right: 8px; /* ← 余白を残して右寄せ */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- アカウント設定 -->
+  <div class="section account" onclick="toggleSection(this)">
+    <div class="section-header">▼ アカウント設定</div>
+    <div class="section-content">
+      <div class="item">
+        <label>パスワード変更</label>
+        <input type="password" placeholder="新しいパスワード">
+      </div>
+      <div class="item">
+        <label>アカウント削除</label>
+        <button>削除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 表示設定 -->
+  <div class="section display" onclick="toggleSection(this)">
+    <div class="section-header">▼ 表示設定</div>
+    <div class="section-content">
+      <div class="item">
+        <label>背景色</label>
+        <input type="color" value="#ffffff">
+      </div>
+      <div class="item">
+        <label>並び順</label>
+        <select>
+          <option>入試日順</option>
+          <option>学校名順</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>テーマ</label>
+        <select>
+          <option>ライト</option>
+          <option>ダーク</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zoom自習室 -->
+  <div class="section zoom" onclick="toggleSection(this)">
+    <div class="section-header">▼ Zoom自習室</div>
+    <div class="section-content">
+      <div class="item">
+        <label>リンク</label>
+        <input type="text" placeholder="https://...">
+      </div>
+      <div class="item">
+        <label>タイマー形式</label>
+        <select>
+          <option>m:ss</option>
+          <option>h:mm:ss</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- データ管理 -->
+  <div class="section data" onclick="toggleSection(this)">
+    <div class="section-header">▼ データ管理</div>
+    <div class="section-content">
+      <div class="item">
+        <label>自動ログイン</label>
+        <select>
+          <option>ON</option>
+          <option>OFF</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>バックアップ</label>
+        <button>エクスポート</button>
+      </div>
+      <div class="item">
+        <label>復元</label>
+        <button>インポート</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSection(section) {
+      const content = section.querySelector(".section-content");
+      content.style.display = (content.style.display === "block") ? "none" : "block";
+    }
+  </script>
+
+</body>
+</html>
