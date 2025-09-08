@@ -32,19 +32,25 @@ document.getElementById("registerBtn").addEventListener("click", () => {
 document.getElementById("loginBtn").addEventListener("click", () => {
   const u = document.getElementById("loginUser").value.trim();
   const p = document.getElementById("loginPass").value.trim();
+
   if (u === localStorage.getItem("username") && p === localStorage.getItem("password")) {
+    // ✅ 自動ログインチェック
+    const chk = document.getElementById("autoLoginChk");
+    if (chk && chk.checked) {
+      localStorage.setItem("autoLoginUser", u);
+    } else {
+      localStorage.removeItem("autoLoginUser");
+    }
+
+    // ダッシュボード表示
     loginScreen.style.display = "none";
     dashboard.style.display = "block";
   } else {
-    document.getElementById("loginMessage").textContent = "ユーザー名またはパスワードが違います";
+    document.getElementById("loginMessage").textContent =
+      "ユーザー名またはパスワードが違います";
   }
 });
 
-// ログアウト
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  dashboard.style.display = "none";
-  loginScreen.style.display = "block";
-});
 
 /* ====== 共通モーダル ====== */
 const overlay = document.getElementById("modalOverlay");
