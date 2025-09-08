@@ -38,27 +38,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ログイン処理
-document.getElementById("loginBtn").addEventListener("click", () => {
-  const u = document.getElementById("loginUser").value.trim();
-  const p = document.getElementById("loginPass").value.trim();
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      const u = document.getElementById("loginUser").value.trim();
+      const p = document.getElementById("loginPass").value.trim();
 
-  if (u === localStorage.getItem("username") && p === localStorage.getItem("password")) {
-    // ✅ 自動ログインチェック
-    const chk = document.getElementById("autoLoginChk");
-    if (chk && chk.checked) {
-      localStorage.setItem("autoLoginUser", u);
-    } else {
-      localStorage.removeItem("autoLoginUser");
-    }
+      if (u === localStorage.getItem("username") && p === localStorage.getItem("password")) {
+        // 自動ログイン設定
+        const chk = document.getElementById("autoLoginChk");
+        if (chk && chk.checked) {
+          localStorage.setItem("autoLoginUser", u);
+        } else {
+          localStorage.removeItem("autoLoginUser");
+        }
 
-    // ダッシュボード表示
-    loginScreen.style.display = "none";
-    dashboard.style.display = "block";
-  } else {
-    document.getElementById("loginMessage").textContent =
-      "ユーザー名またはパスワードが違います";
+        // ✅ ページ遷移に変更
+        window.location.href = "dashboard.html";
+      } else {
+        document.getElementById("loginMessage").textContent =
+          "ユーザー名またはパスワードが違います";
+      }
+    });
   }
 });
+
 
 
 /* ====== 共通モーダル ====== */
