@@ -1,10 +1,13 @@
+/* 基本 */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   margin: 0;
   padding: 1rem;
   background: #f5f5f7;
+  color: #222;
 }
 
+/* カード */
 .card {
   background: #fff;
   border-radius: 12px;
@@ -16,53 +19,140 @@ body {
 .edit-icon {
   cursor: pointer;
   float: right;
+  font-size: 1.1em;
 }
 
-.grid {
+/* カウントダウングリッド（2列） */
+#countdownGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
 }
 
-.grid .school-card {
-  border-radius: 8px;
-  padding: 12px;
+/* カード中身（カウントダウンカード） */
+.countdown-card {
+  border-radius: 12px;
+  padding: 16px;
   color: #fff;
-  text-align: center;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* モーダル */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95em;
+}
+
+.card-sub {
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+.card-body {
+  font-size: 2.2em;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* 削除ボタン */
+.delete-btn {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Zoom表示 */
+#zoomStatus {
+  margin: 10px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.zoom-buttons button {
+  margin-right: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.zoom-buttons #joinBtn {
+  background: #007aff;
+  color: #fff;
+}
+
+.zoom-buttons #successBtn {
+  background: #34c759;
+  color: #fff;
+}
+
+/* モーダルオーバーレイ（中央ダイアログ） */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(7px); /* ← iOS風ぼかし */
+  background: rgba(0,0,0,0.35);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 1000;
 }
 
-.modal-sheet {
-  width: 100%;
-  max-height: 80%;
+.modal-dialog {
   background: #fff;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 18px;
+  width: 80%;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+  animation: fadeIn 0.18s ease;
+  color: #111;
 }
 
-.modal-sheet.show {
-  transform: translateY(0);
+.modal-actions {
+  text-align: right;
+  margin-top: 14px;
 }
 
-.modal-grip {
-  width: 40px;
-  height: 4px;
-  background: #ccc;
-  border-radius: 2px;
-  margin: 8px auto;
+.btn-primary {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.btn-secondary {
+  background: #efefef;
+  color: #222;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* フォーム要素のスタイルを軽く */
+input[type="text"], input[type="url"], input[type="date"], input[type="time"], input[type="color"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #e3e3e3;
+  box-sizing: border-box;
+}
+
+/* アニメ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
