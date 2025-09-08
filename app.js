@@ -14,19 +14,28 @@ if (!savedUser || !savedPass) {
 }
 
 // 登録処理
-document.getElementById("registerBtn").addEventListener("click", () => {
-  const u = document.getElementById("regUser").value.trim();
-  const p = document.getElementById("regPass").value.trim();
-  if (!u || !p) {
-    alert("ユーザー名とパスワードを入力してください");
-    return;
+document.addEventListener("DOMContentLoaded", () => {
+  const regBtn = document.getElementById("registerBtn");
+  if (regBtn) {
+    regBtn.addEventListener("click", () => {
+      const u = document.getElementById("regUser").value.trim();
+      const p = document.getElementById("regPass").value.trim();
+
+      if (!u || !p) {
+        alert("ユーザー名とパスワードを入力してください");
+        return;
+      }
+
+      localStorage.setItem("username", u);
+      localStorage.setItem("password", p);
+      alert("登録完了しました！ログインしてください。");
+
+      // 直接 login.html に移動する
+      window.location.href = "login.html";
+    });
   }
-  localStorage.setItem("username", u);
-  localStorage.setItem("password", p);
-  alert("登録完了しました！ログインしてください。");
-  registerScreen.style.display = "none";
-  loginScreen.style.display = "block";
 });
+
 
 // ログイン処理
 document.getElementById("loginBtn").addEventListener("click", () => {
