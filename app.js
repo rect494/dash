@@ -1,75 +1,322 @@
-// ===== モーダル制御 =====
+/* ====== 共通モーダル ====== */
 const overlay = document.getElementById("modalOverlay");
-const sheet = document.getElementById("modalSheet");
+const modalTitle = document.getElementById("modalTitle");
 const modalContent = document.getElementById("modalContent");
-const closeModal = document.getElementById("closeModal");
+const saveBtn = document.getElementById("saveBtn");
+const cancelBtn = document.getElementById("cancelBtn");
 
-function openModal(contentHtml) {
+function openModal(title, contentHtml, onSave) {
+  modalTitle.textContent = title;
   modalContent.innerHTML = contentHtml;
   overlay.style.display = "flex";
-  setTimeout(() => sheet.classList.add("show"), 10);
+
+  function close() {
+    overlay.style.display = "none";
+    saveBtn.onclick = null;
+    cancelBtn.onclick = null;
+  }
+
+  saveBtn.onclick = () => {
+    onSave && onSave();
+    close();
+  };
+  cancelBtn.onclick = () => {
+    close();
+  };
 }
 
-function closeModalFn() {
-  sheet.classList.remove("show");
-  setTimeout(() => { overlay.style.display = "none"; }, 300);
-}
+// 背景クリックで閉じる
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) overlay.style.display = "none";
+});
+window.addEventListener("keydown", (e) => { if (e.key === "Escape") overlay.style.display = "none"; });
 
-closeModal.onclick = closeModalFn;
-overlay.onclick = e => { if (e.target === overlay) closeModalFn(); };
+/* ====== 永続化と初期データ読み込み ====== */
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let countdowns = JSON.parse(localStorage.getItem("countdowns") || "[]");
+let zoomSettings = JSON.parse(localStorage.getItem("zoomSettings") || "null") || { link: "", time: "" };
 
-// ===== 編集アイコンの動き =====
-document.getElementById("editTasks").onclick = () => {
-  openModal("<h3>やること編集</h3><input type='text' placeholder='追加…'>");
-};
-
-document.getElementById("editZoom").onclick = () => {
-  openModal("<h3>Zoom設定</h3><input type='time'>");
-};
-
-document.getElementById("editCountdown").onclick = () => {
-  openModal("<h3>カウントダウン設定</h3><p>ここで学校の日付や色を設定できるようにする予定</p>");
-};
-
-// ===== Zoom 入室ボタンの動き =====
+const taskListEl = document.getElementById("taskList");
+const countdownGrid = document.getElementById("countdownGrid");
+const zoomStatusEl = document.getElementById("zoomStatus");
 const joinBtn = document.getElementById("joinBtn");
 const successBtn = document.getElementById("successBtn");
-const zoomStatus = document.getElementById("zoomStatus");
 
-let joinTime = null;
+function saveAll() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("countdowns", JSON.stringify(countdowns));
+  localStorage.setItem("zoomSettings", JSON.stringify(zoomSettings));
+}
 
-joinBtn.onclick = () => {
-  window.open("https://zoom.us", "_blank"); // ← 本番は固定リンクに差し替え
-  joinBtn.style.display = "none";
-  successBtn.style.display = "inline-block";
-};
+/* ====== 今日やること ====== */
+function renderTasks() {
+  taskListEl.innerHTML = "";
+  if (tasks.length === 0) {
+    const p = document.createElement("li");
+    p.textContent = "（タップして追加）";
+    p.style.opacity = 0.6;
+    taskListEl.appendChild(p);
+    return;
+  }
+  tasks.forEach((t, i) => {
+    const li = document.createElement("li");
+    li.textContent = t;
+    li.style.padding = "6px 0";
+    taskListEl.appendChild(li);
+  });
+}
 
-successBtn.onclick = () => {
-  joinTime = new Date();
-  zoomStatus.textContent = "入室中…";
-  successBtn.style.display = "none";
-  // 経過時間を表示するタイマー開始
-  setInterval(() => {
-    if (joinTime) {
-      const diff = Math.floor((Date.now() - joinTime.getTime()) / 1000);
-      zoomStatus.textContent = "入室してから " + formatTime(diff);
+document.getElementById("editTasks").addEventListener("click", () => {
+  const html = `
+    <div id="taskBox">
+      <div style="margin-bottom:8px;"><strong>現在のタスク</strong></div>
+      <div id="taskListEdit" style="max-height:180px; overflow:auto; margin-bottom:8px;"></div>
+      <input type="text" id="newTask" placeholder="新しいタスクを入力">
+    </div>
+  `;
+  openModal("今日やること", html, () => {
+    const v = document.getElementById("newTask").value.trim();
+    if (v) tasks.push(v);
+    // 内部の削除ボタンからの操作も保持
+    saveAll();
+    renderTasks();
+  });
+
+  // モーダルが開いたら現在のタスクをリスト化
+  setTimeout(() => {
+    const editBox = document.getElementById("taskListEdit");
+    editBox.innerHTML = "";
+    tasks.forEach((t, idx) => {
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.justifyContent = "space-between";
+      row.style.alignItems = "center";
+      row.style.marginBottom = "6px";
+
+      const span = document.createElement("span");
+      span.textContent = t;
+      row.appendChild(span);
+
+      const del = document.createElement("button");
+      del.textContent = "削除";
+      del.style.background = "#efefef";
+      del.style.border = "none";
+      del.style.borderRadius = "6px";
+      del.style.padding = "4px 8px";
+      del.style.cursor = "pointer";
+      del.onclick = () => {
+        tasks.splice(idx, 1);
+        saveAll();
+        renderTasks();
+        // 画面内も消す
+        row.remove();
+      };
+      row.appendChild(del);
+
+      editBox.appendChild(row);
+    });
+  }, 10);
+});
+
+/* ====== カウントダウン（2列・日付順） ====== */
+function calcDaysLeft(dateStr) {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const target = new Date(dateStr);
+  target.setHours(0,0,0,0);
+  const diff = target - now;
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+function renderCountdowns() {
+  // 日付近い順
+  countdowns.sort((a,b) => new Date(a.date) - new Date(b.date));
+  countdownGrid.innerHTML = "";
+  countdowns.forEach(c => {
+    const days = calcDaysLeft(c.date);
+    const card = document.createElement("div");
+    card.className = "countdown-card";
+    card.style.background = c.color || "#007aff";
+    card.innerHTML = `
+      <div class="card-header">
+        <span>${c.name}</span>
+        <button class="delete-btn" data-id="${c.id}">×</button>
+      </div>
+      <div class="card-sub">入試日: ${c.date}</div>
+      <div class="card-body">${days}日</div>
+    `;
+    countdownGrid.appendChild(card);
+  });
+
+  // 削除イベント
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      countdowns = countdowns.filter(x => String(x.id) !== String(id));
+      saveAll();
+      renderCountdowns();
+    });
+  });
+}
+
+document.getElementById("editCountdown").addEventListener("click", () => {
+  // モーダル内で追加＋現在一覧表示（簡易編集）
+  const html = `
+    <div>
+      <input type="text" id="schoolName" placeholder="学校名">
+      <input type="date" id="examDate">
+      <input type="color" id="schoolColor" value="#007aff">
+      <div style="margin-top:12px; font-weight:600;">現在の登録</div>
+      <div id="countdownListEdit" style="max-height:180px; overflow:auto; margin-top:8px;"></div>
+    </div>
+  `;
+  openModal("カウントダウン設定", html, () => {
+    const name = document.getElementById("schoolName").value.trim();
+    const date = document.getElementById("examDate").value;
+    const color = document.getElementById("schoolColor").value;
+    if (!name || !date) return;
+    const id = Date.now();
+    countdowns.push({ id, name, date, color });
+    saveAll();
+    renderCountdowns();
+  });
+
+  setTimeout(() => {
+    const list = document.getElementById("countdownListEdit");
+    list.innerHTML = "";
+    countdowns.forEach((c, idx) => {
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.justifyContent = "space-between";
+      row.style.alignItems = "center";
+      row.style.padding = "6px 0";
+
+      const left = document.createElement("div");
+      left.innerHTML = `<strong>${c.name}</strong><div style="font-size:12px; opacity:0.8;">${c.date}</div>`;
+      row.appendChild(left);
+
+      const del = document.createElement("button");
+      del.textContent = "削除";
+      del.style.background = "#efefef";
+      del.style.border = "none";
+      del.style.borderRadius = "6px";
+      del.style.padding = "6px 8px";
+      del.style.cursor = "pointer";
+      del.onclick = () => {
+        countdowns.splice(idx, 1);
+        saveAll();
+        renderCountdowns();
+        row.remove();
+      };
+      row.appendChild(del);
+
+      list.appendChild(row);
+    });
+  }, 10);
+});
+
+/* ====== Zoom 自習室 ====== */
+let startTime = null;
+let joinTimer = null;
+
+document.getElementById("editZoom").addEventListener("click", () => {
+  const canChangeLink = !!zoomSettings.link ? `<label><input type="checkbox" id="changeLink"> リンクを変更する</label>` : "";
+  const html = `
+    <div>
+      <label>開始時刻</label>
+      <input type="time" id="zoomTime" value="${zoomSettings.time || ''}">
+      <label style="display:block; margin-top:8px;">Zoomリンク</label>
+      <input type="url" id="zoomUrl" placeholder="https://zoom.us/..." value="${zoomSettings.link || ''}" ${zoomSettings.link ? "disabled" : ""}>
+      ${canChangeLink}
+    </div>
+  `;
+  openModal("Zoom設定", html, () => {
+    const time = document.getElementById("zoomTime").value;
+    const url = document.getElementById("zoomUrl").value;
+    zoomSettings.time = time || "";
+    if (document.getElementById("changeLink") && document.getElementById("changeLink").checked) {
+      zoomSettings.link = url || "";
+    } else if (!zoomSettings.link && url) {
+      // 初回保存
+      zoomSettings.link = url || "";
     }
-  }, 1000);
-};
+    saveAll();
+    updateZoomStatus();
+  });
 
-// ===== 時間フォーマット（35:10 / 1:21:34 形式） =====
-function formatTime(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
+  // モーダル内のトグル制御
+  setTimeout(() => {
+    const chk = document.getElementById("changeLink");
+    const urlInput = document.getElementById("zoomUrl");
+    if (chk) {
+      chk.addEventListener("change", () => {
+        urlInput.disabled = !chk.checked;
+      });
+    }
+  }, 10);
+});
 
-  if (h > 0) {
-    return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+joinBtn.addEventListener("click", () => {
+  if (zoomSettings.link) {
+    window.open(zoomSettings.link, "_blank");
+    joinBtn.style.display = "none";
+    successBtn.style.display = "inline-block";
   } else {
-    return `${m}:${String(s).padStart(2,"0")}`;
+    alert("先にZoomリンクを設定してください（✏️をタップ）");
+  }
+});
+
+successBtn.addEventListener("click", () => {
+  startTime = new Date();
+  successBtn.style.display = "none";
+  if (joinTimer) clearInterval(joinTimer);
+  joinTimer = setInterval(updateZoomStatus, 1000);
+});
+
+/* 表示更新 */
+function updateZoomStatus() {
+  if (!zoomSettings.time) {
+    zoomStatusEl.textContent = "未設定";
+    return;
+  }
+
+  if (startTime) {
+    const diff = Date.now() - startTime.getTime();
+    zoomStatusEl.textContent = "入室してから " + formatDuration(diff);
+  } else {
+    const [h,m] = zoomSettings.time.split(":").map(Number);
+    const target = new Date();
+    target.setHours(h, m, 0, 0);
+    const diff = target - new Date();
+    if (diff > 0) {
+      zoomStatusEl.textContent = "開始まで " + formatDuration(diff);
+    } else {
+      zoomStatusEl.textContent = "開始時間を過ぎています";
+    }
   }
 }
-// ===== Service Worker 登録 =====
+
+/* ====== ユーティリティ ====== */
+function formatDuration(ms) {
+  // ms が負でも扱える（ただし表示は0秒以下なら 0:00 とする）
+  let totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return `${m}:${String(s).padStart(2,"0")}`;
+}
+
+/* ====== 初期レンダリング & タイマー ====== */
+renderTasks();
+renderCountdowns();
+updateZoomStatus();
+setInterval(() => {
+  renderCountdowns();
+  updateZoomStatus();
+}, 1000);
+
+/* ====== Service Worker 登録 ====== */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js")
     .then(() => console.log("SW registered"))
