@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>確認</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ログイン確認</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -10,6 +11,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
       background: #f5f5f5;
     }
     .box {
@@ -20,12 +22,22 @@
       text-align: center;
       width: 300px;
     }
+    h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    p {
+      margin: 10px 0 20px;
+      font-weight: 500;
+      color: #333;
+    }
     button {
-      margin: 10px;
+      margin: 0 8px;
       padding: 10px 16px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
+      font-size: 14px;
     }
     .yes { background: #007aff; color: #fff; }
     .no { background: #efefef; }
@@ -41,7 +53,8 @@
 
   <script>
     const user = localStorage.getItem("autoLoginUser");
-    document.getElementById("username").textContent = "ユーザー名: " + (user || "未設定");
+    document.getElementById("username").textContent =
+      user ? "ユーザー名: " + user : "ユーザー未設定";
 
     function proceed() {
       window.location.href = "dashboard.html";
