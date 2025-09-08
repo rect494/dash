@@ -1,6 +1,6 @@
 {
   "name": "自習ダッシュボード",
-  "short_name": "ダッシュ",
+  "short_name": " rect",
   "start_url": "./dash/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
