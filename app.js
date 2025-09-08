@@ -370,3 +370,16 @@ if ("serviceWorker" in navigator) {
     .then(() => console.log("SW registered"))
     .catch(err => console.error("SW registration failed:", err));
 }
+
+// ログアウト処理
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      // 自動ログイン設定を消す
+      localStorage.removeItem("autoLoginUser");
+      // login.html に戻る
+      window.location.href = "login.html";
+    });
+  }
+});
