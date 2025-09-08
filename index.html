@@ -3,10 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Redirecting...</title>
-  <!-- 0秒後に login.html へリダイレクト -->
-  <meta http-equiv="refresh" content="0; url=login.html">
+  <script>
+    window.onload = () => {
+      const autoUser = localStorage.getItem("autoLoginUser");
+      if (autoUser) {
+        // 自動ログインが設定されてる → confirm.html に飛ばす
+        window.location.href = "confirm.html";
+      } else {
+        // 自動ログインなし → login.html へ
+        window.location.href = "login.html";
+      }
+    };
+  </script>
 </head>
 <body>
-  <p>ログインページに移動中...</p>
+  <p>移動中...</p>
 </body>
 </html>
