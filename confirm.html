@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>確認</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f5f5f5;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 300px;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .yes { background: #007aff; color: #fff; }
+    .no { background: #efefef; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h3>このアカウントでログインしますか？</h3>
+    <p id="username"></p>
+    <button class="yes" onclick="proceed()">はい</button>
+    <button class="no" onclick="cancel()">いいえ</button>
+  </div>
+
+  <script>
+    const user = localStorage.getItem("autoLoginUser");
+    document.getElementById("username").textContent = "ユーザー名: " + (user || "未設定");
+
+    function proceed() {
+      window.location.href = "dashboard.html";
+    }
+
+    function cancel() {
+      localStorage.removeItem("autoLoginUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
