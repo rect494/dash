@@ -70,3 +70,29 @@ body {
   margin-top: 15px;
   font-size: 14px;
 }
+
+/* confirm.html 用のボタン横並び */
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.button-row .yes {
+  background: #007aff;
+  color: #fff;
+}
+
+.button-row .no {
+  background: #efefef;
+  color: #333;
+}
+
+.button-row button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
