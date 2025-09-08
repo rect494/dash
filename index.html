@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>自習ダッシュボード</title>
 
   <!-- スタイルとスクリプト -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script defer src="app.js"></script>
 
-  <!-- PWA関連 -->
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="ダッシュ" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
 
-  <!-- iOS用の必須タグ -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ダッシュ">
-  <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
@@ -35,16 +35,21 @@
   <section class="card">
     <h2>📌 Zoom自習室 <span class="edit-icon" id="editZoom">✏️</span></h2>
     <div id="zoomStatus">未設定</div>
-    <button id="joinBtn">入室</button>
-    <button id="successBtn" style="display:none;">入室成功</button>
+    <div class="zoom-buttons">
+      <button id="joinBtn">入室</button>
+      <button id="successBtn" style="display:none;">入室成功</button>
+    </div>
   </section>
 
-  <!-- モーダル -->
+  <!-- 共通モーダル（中央ダイアログ） -->
   <div id="modalOverlay" class="modal-overlay" style="display:none;">
-    <div id="modalSheet" class="modal-sheet">
-      <div class="modal-grip"></div>
+    <div id="modalDialog" class="modal-dialog" role="dialog" aria-modal="true">
+      <h3 id="modalTitle">編集</h3>
       <div id="modalContent"></div>
-      <button id="closeModal">閉じる</button>
+      <div class="modal-actions">
+        <button id="saveBtn" class="btn-primary">保存</button>
+        <button id="cancelBtn" class="btn-secondary">キャンセル</button>
+      </div>
     </div>
   </div>
 
