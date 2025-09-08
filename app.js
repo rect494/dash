@@ -398,3 +398,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// register.html 専用の登録処理
+document.addEventListener("DOMContentLoaded", () => {
+  const regBtn = document.getElementById("registerBtn");
+  if (regBtn) {
+    regBtn.addEventListener("click", () => {
+      const u = document.getElementById("regUser").value.trim();
+      const p = document.getElementById("regPass").value.trim();
+
+      if (!u || !p) {
+        alert("ユーザー名とパスワードを入力してください");
+        return;
+      }
+
+      // 保存
+      localStorage.setItem("username", u);
+      localStorage.setItem("password", p);
+
+      alert("登録完了しました！ログインしてください。");
+      // login.html に強制移動
+      window.location.href = "login.html";
+    });
+  }
+});
