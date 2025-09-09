@@ -6,12 +6,15 @@ const dashboard = document.getElementById("dashboard");
 const savedUser = localStorage.getItem("username");
 const savedPass = localStorage.getItem("password");
 
-// 初期表示
-if (!savedUser || !savedPass) {
-  registerScreen.style.display = "block";
-} else {
-  loginScreen.style.display = "block";
+// 初期表示（存在する要素がある場合のみ実行）
+if (loginScreen && registerScreen) {
+  if (!savedUser || !savedPass) {
+    registerScreen.style.display = "block";
+  } else {
+    loginScreen.style.display = "block";
+  }
 }
+
 
 // 登録処理
 document.addEventListener("DOMContentLoaded", () => {
